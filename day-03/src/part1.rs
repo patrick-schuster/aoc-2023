@@ -7,10 +7,9 @@ fn main() {
     // Magic trick to skip bounds checks.
     content = format!(".{}.", content);
 
-    let max_len = content.len();
     let mod_len = content.find("\n").unwrap() + 1;
-    println!("{} {}", max_len, mod_len);
     let content: Vec<char> = content.replace("\n", "..").chars().collect();
+    let max_len = content.len();
     let mut len: usize = 0;
     let mut sum: u32 = 0;
 
