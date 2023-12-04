@@ -1,10 +1,7 @@
 use std::fs;
 use std::collections;
 
-use std::env;
 fn main() {
-    env::set_var("RUST_BACKTRACE", "1");
-
     let input = fs::read_to_string("in.txt")
         .expect("Input file not found.");
 
