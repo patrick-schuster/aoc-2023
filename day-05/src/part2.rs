@@ -23,9 +23,7 @@ fn main() {
     // 1. Create a mapping for each seed (seed, range, destination).
     // 2. Map each seed to its destination and store to the indices list.
     for set in sets {
-        println!("Using new set");
         indices.sort_by(|a, b| a.0.cmp(&b.0));
-        println!("Indices: {:?}", indices);
         mapping.clear();
 
         let mut lines = set.split("\n");
@@ -48,41 +46,41 @@ fn main() {
         'outer: for index in &indices {
             let mut current = index.0;
             let mut left_range = index.1;
-            let mut end: u64 = 0;
 
             // Go through each mapping and perform calculations.
             for mapping in &mapping {
+                let dest = mapping.0;
+                let start = mapping.1;
+                let range = mapping.2;
 
                 // Go until first intersection.
-                if index.0 > mapping.1 + mapping.2 {
+                if index.0 > start + range {
                     continue;
                 }
 
                 // If the seed starts outside the range, do things.
-                if current < mapping.1 {
-                    if current + left_range < mapping.1 {
+                if current < start {
+                    if current + left_range < start {
                         temp.push((current, left_range));
                         continue 'outer;
-                    } else if current + left_range < mapping.1 + mapping.2 {
-                        temp.push((current, mapping.1 - current));
-                        temp.push((mapping.0, left_range - (mapping.1 - current)));
+                    } else if current + left_range < start + range {
+                        temp.push((current, start - current));
+                        temp.push((dest, left_range - (start - current)));
                         continue 'outer;
                     } else {
-                        temp.push((mapping.0 + current - mapping.1, mapping.1 + mapping.2 - current));
-                        left_range -= (mapping.1 - current) + mapping.2;
-                        current = mapping.1 + mapping.2;
-                        end = mapping.1 + mapping.2;
+                        temp.push((dest + current - start, start + range - current));
+                        left_range -= (start - current) + range;
+                        current = start + range;
                         continue;
                     }
                 } else {
-                    if current + left_range < mapping.1 + mapping.2 {
-                        temp.push((mapping.0 + (current - mapping.1), left_range));
+                    if current + left_range < start + range {
+                        temp.push((dest + (current - start), left_range));
                         continue 'outer;
                     } else {
-                        temp.push((mapping.0 + current - mapping.1, mapping.1 + mapping.2 - current));
-                        left_range -= mapping.1 + mapping.2 - current;
-                        current = mapping.1 + mapping.2;
-                        end = mapping.1 + mapping.2;
+                        temp.push((dest + current - start, start + range - current));
+                        left_range -= start + range - current;
+                        current = start + range;
                         continue;
                     }
                 }
