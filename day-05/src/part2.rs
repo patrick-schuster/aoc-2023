@@ -23,7 +23,6 @@ fn main() {
     // 1. Create a mapping for each seed (seed, range, destination).
     // 2. Map each seed to its destination and store to the indices list.
     for set in sets {
-        indices.sort_by(|a, b| a.0.cmp(&b.0));
         mapping.clear();
 
         let mut lines = set.split("\n");
