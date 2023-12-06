@@ -13,7 +13,7 @@ fn main() {
         .split(": ").collect::<Vec<&str>>()[1]
         .split_whitespace().collect::<Vec<&str>>();
 
-    let mut result: u64 = 0;
+    let mut result = 0;
     for i in 0..times.len() {
         let time: u16 = times[i].parse().unwrap();
         let distance: u16 = distances[i].parse().unwrap();
@@ -29,7 +29,6 @@ fn main() {
         
         // Calculate range and multiply.
         let range: u32 = (max - min).into();
-        println!("Range: {}", range);
         result = (result * range).max(range);
     }
 
