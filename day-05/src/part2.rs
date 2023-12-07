@@ -1,5 +1,11 @@
 use std::fs;
 
+struct Mapping {
+    dst: u64,
+    src: u64,
+    range: u64
+}
+
 fn main() {
     let content = fs::read_to_string("in.txt")
         .expect("Input file not found.");
@@ -9,7 +15,7 @@ fn main() {
         .split(": ").collect::<Vec<&str>>()[1];
 
     let mut indices: Vec<(u64, u64)> = Vec::new();
-    let mut mapping: Vec<(u64, u64, u64)> = Vec::new();
+    let mut mappings: Vec<Mapping> = Vec::new();
 
     // For beginning, store all seeds in the indices list.
     let values = seeds.split(" ").collect::<Vec<&str>>();
@@ -23,22 +29,23 @@ fn main() {
     // 1. Create a mapping for each seed (seed, range, destination).
     // 2. Map each seed to its destination and store to the indices list.
     for set in sets {
-        mapping.clear();
+        mappings.clear();
 
         let mut lines = set.split("\n");
         let _ = lines.next();
         for line in lines {
             let mut iter = line.split_whitespace();
-            let tuple: (u64, u64, u64) = (
-                iter.next().unwrap().parse().unwrap(),
-                iter.next().unwrap().parse().unwrap(),
-                iter.next().unwrap().parse().unwrap());
+            let mapping = Mapping {
+                dst: iter.next().unwrap().parse().unwrap(),
+                src: iter.next().unwrap().parse().unwrap(),
+                range: iter.next().unwrap().parse().unwrap()
+            };
 
-            mapping.push(tuple);
+            mappings.push(mapping);
         }
 
         // Sort the mapping by seed to check undefined areas.
-        mapping.sort_by(|a, b| a.1.cmp(&b.1));
+        mappings.sort_by(|a, b| a.src.cmp(&b.src));
 
         // Now for each seed, find its destination.
         let mut temp: Vec<(u64, u64)> = Vec::new();
@@ -47,10 +54,10 @@ fn main() {
             let mut left_range = index.1;
 
             // Go through each mapping and perform calculations.
-            for mapping in &mapping {
-                let dest = mapping.0;
-                let start = mapping.1;
-                let range = mapping.2;
+            for m in &mappings {
+                let dest = m.dst;
+                let start = m.src;
+                let range = m.range;
 
                 // Go until first intersection.
                 if index.0 > start + range {

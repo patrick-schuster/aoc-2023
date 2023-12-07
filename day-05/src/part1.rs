@@ -1,5 +1,11 @@
 use std::fs;
 
+struct Mapping {
+    dst: u64,
+    src: u64,
+    range: u64
+}
+
 fn main() {
     let content = fs::read_to_string("in.txt")
         .expect("Input file not found.");
@@ -9,7 +15,7 @@ fn main() {
         .split(": ").collect::<Vec<&str>>()[1];
 
     let mut indices: Vec<u64> = Vec::new();
-    let mut mapping: Vec<(u64, u64, u64)> = Vec::new();
+    let mut mappings: Vec<Mapping> = Vec::new();
 
     // For beginning, store all seeds in the indices list.
     for seed in seeds.split(" ") {
@@ -20,27 +26,27 @@ fn main() {
     // 1. Create a mapping for each seed (seed, range, destination).
     // 2. Map each seed to its destination and store to the indices list.
     for set in sets {
-        println!("Using new set");
-        mapping.clear();
+        mappings.clear();
 
         let mut lines = set.split("\n");
         let _ = lines.next();
         for line in lines {
             let mut iter = line.split_whitespace();
-            let tuple: (u64, u64, u64) = (
-                iter.next().unwrap().parse().unwrap(),
-                iter.next().unwrap().parse().unwrap(),
-                iter.next().unwrap().parse().unwrap());
+            let mapping = Mapping {
+                dst: iter.next().unwrap().parse().unwrap(),
+                src: iter.next().unwrap().parse().unwrap(),
+                range: iter.next().unwrap().parse().unwrap()
+            };
 
-            mapping.push(tuple);
+            mappings.push(mapping);
         }
 
         // Now for each seed, find its destination.
         let mut temp: Vec<u64> = Vec::new();
         'outer: for index in &indices {
-            for tuple in &mapping {
-                if index >= &tuple.1 && index <= &(tuple.1 + tuple.2) {
-                    temp.push(tuple.0 + index - tuple.1);
+            for m in &mappings {
+                if *index >= m.src && *index <= m.src + m.range {
+                    temp.push(m.dst + index - m.src);
                     continue 'outer;
                 }
             }
