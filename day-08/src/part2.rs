@@ -11,13 +11,15 @@ fn main() {
 
     let directions: Vec<char> = order.chars().collect(); 
     let mut ways: HashMap<&str, (&str, &str)> = HashMap::new();
-    for line in lines {
-        let parts: Vec<&str> = line.split(" = ").collect();
-        let key = parts[0];
-        let values: Vec<&str> = parts[1].trim_matches(|p| p == '(' || p == ')')
-            .split(", ").collect();
 
-        ways.insert(key, (values[0], values[1]));
+    for line in lines {
+        let mut parts = line.split(" = ");
+        let key = parts.next().unwrap();
+        let mut values = parts.next().unwrap()
+            .trim_matches(|p| p == '(' || p == ')')
+            .split(", ");
+
+        ways.insert(key, (values.next().unwrap(), values.next().unwrap()));
     }
 
     let len = directions.len();
@@ -26,10 +28,10 @@ fn main() {
         .filter(|k| k.ends_with('A'))
         .map(|k| *k).collect();
 
-    for key in &mut keys {
+    for key in keys {
         let mut index = 0;
         while !key.ends_with('Z') {
-            let tuple = ways.get(key).unwrap();
+            let tuple = *ways.get(key).unwrap();
             *key = if directions[index % len] == 'L' { tuple.0 } else { tuple.1 };
             index += 1;
         }

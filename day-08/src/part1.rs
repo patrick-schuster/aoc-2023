@@ -11,27 +11,26 @@ fn main() {
 
     let directions: Vec<char> = order.chars().collect(); 
     let mut ways: HashMap<&str, (&str, &str)> = HashMap::new();
-    for line in lines {
-        let parts: Vec<&str> = line.split(" = ").collect();
-        let key = parts[0];
-        let values: Vec<&str> = parts[1].trim_matches(|p| p == '(' || p == ')')
-            .split(", ").collect();
 
-        ways.insert(key, (values[0], values[1]));
+    for line in lines {
+        let mut parts = line.split(" = ");
+        let key = parts.next().unwrap();
+        let mut values = parts.next().unwrap()
+            .trim_matches(|p| p == '(' || p == ')')
+            .split(", ");
+
+        ways.insert(key, (values.next().unwrap(), values.next().unwrap()));
     }
 
     let len = directions.len();
     let mut key = "AAA";
     let mut index = 0;
-    loop {
+    while key != "ZZZ" {
         let direction = directions[index % len];
         let tuple = ways.get(key).unwrap();
         key = if direction == 'L' { tuple.0 } else { tuple.1 };
         index += 1;
-
-        if key == "ZZZ" {
-            println!("Found ZZZ in {} steps", index);
-            break;
-        }
     }
+
+    println!("Steps: {}", index);
 }
