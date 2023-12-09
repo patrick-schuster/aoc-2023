@@ -7,11 +7,11 @@ fn main() {
     let mut lines = content.lines();
     let time: u64 = lines.next().unwrap()
         .split(": ").last().unwrap()
-        .trim().parse().unwrap();
+        .replace(" ", "").parse().unwrap();
 
     let distance: u64 = lines.next().unwrap()
         .split(": ").last().unwrap()
-        .trim().parse().unwrap();
+        .replace(" ", "").parse().unwrap();
 
     // Calculate area through midnight formula.
     // Min value (-b - sqrt(b^2 - 4ac)) / 2a)
