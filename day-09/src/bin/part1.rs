@@ -2,24 +2,22 @@ use std::fs;
 
 fn main() {
     let content = fs::read_to_string("in.txt")
-        .expect("file not found");
+        .expect("Failed to read file");
 
     let mut sum: i32 = 0;
-    let lines = content.lines();
-    for line in lines {
+    for line in content.lines() {
         let numbers: Vec<i32> = line.split_whitespace()
             .map(|x| x.parse::<i32>().unwrap())
             .collect();
 
-        let result = step_down(&numbers);
+        let result = extrapolate(&numbers);
         sum += result;
-        println!("{} -> {}", line, result);
     }
 
     println!("Sum: {}", sum);
 }
 
-fn step_down(numbers: &Vec<i32>) -> i32 {
+fn extrapolate(numbers: &Vec<i32>) -> i32 {
     let mut seen = numbers[0];
     for i in 1..numbers.len() {
         if numbers[i] != seen {
@@ -36,5 +34,5 @@ fn step_down(numbers: &Vec<i32>) -> i32 {
         .map(|w| w[1] - w[0])
         .collect::<Vec<i32>>();
 
-    return step_down(&calc) + numbers[calc.len()];
+    return extrapolate(&calc) + numbers[calc.len()];
 }
