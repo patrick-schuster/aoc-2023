@@ -17,8 +17,6 @@ fn main() {
             .split(",").map(|x| x.parse::<u8>().unwrap())
             .collect();
         
-  
-        // map with custom hasher
         let mut results: HashMap<u32, u64> = HashMap::new();
         result += follow(&mut results, sequence, 0, &groups, 0, 0);
     }
@@ -40,7 +38,7 @@ fn follow(results: &mut HashMap<u32, u64>, seq: &[u8], seq_idx: usize, grps: &Ve
         }
     }
 
-    let key: u32 = (seq_idx as u32) << 14 | (grp_idx as u32) << 7 | (grp_len as u32);
+    let key: u32 = (seq_idx as u32) << 16 | (grp_idx as u32) << 8 | (grp_len as u32);
     if let Some(&val) = results.get(&key) {
         return val;
     }
