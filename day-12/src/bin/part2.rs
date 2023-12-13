@@ -8,17 +8,13 @@ fn main() {
     let mut result: u64 = 0;
     for line in content.lines() {
         let mut iter = line.split_whitespace();
-        let sequence = iter.next().unwrap().to_owned() + "?";
-        let sequence = &sequence.repeat(5)[..sequence.len() * 5 - 1];
-        let sequence: &[u8] = sequence.as_bytes();
-        let groups = iter.next().unwrap().to_owned() + ",";
-        let groups = &groups.repeat(5)[..groups.len() * 5 - 1];
-        let groups: Vec<u8> = groups
-            .split(",").map(|x| x.parse::<u8>().unwrap())
-            .collect();
-        
-        let mut results: HashMap<u32, u64> = HashMap::new();
-        result += follow(&mut results, sequence, 0, &groups, 0, 0);
+        let sequence = format!("{}?", iter.next().unwrap()).repeat(5);
+        let sequence = &sequence[..sequence.len() - 1].as_bytes();
+        let groups = format!("{},", iter.next().unwrap()).repeat(5);
+        let groups: &Vec<u8> = &groups[..groups.len() - 1].split(",")
+            .map(|x| x.parse::<u8>().unwrap()).collect();
+
+        result += follow(&mut HashMap::with_capacity(4095), sequence, 0, groups, 0, 0);
     }
 
     println!("Result: {}", result);
@@ -52,7 +48,7 @@ fn follow(results: &mut HashMap<u32, u64>, seq: &[u8], seq_idx: usize, grps: &Ve
     }
 
     if curr == b'#' || curr == b'?' {
-        result += follow(results, seq, seq_idx + 1, grps, grp_idx, grp_len + 1);
+        result += follow(results, seq, seq_idx + 1, grps, grp_idx, grp_len + 1)
     }
     
     results.insert(key, result);

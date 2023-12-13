@@ -8,9 +8,8 @@ fn main() {
     for line in content.lines() {
         let mut iter = line.split_whitespace();
         let sequence: &[u8] = iter.next().unwrap().as_bytes();
-        let groups: Vec<u8> = iter.next().unwrap()
-            .split(",").map(|x| x.parse::<u8>().unwrap())
-            .collect();
+        let groups: Vec<u8> = iter.next().unwrap().split(",")
+            .map(|x| x.parse::<u8>().unwrap()).collect();
 
         result += follow(sequence, 0, &groups, 0, 0);
     }
