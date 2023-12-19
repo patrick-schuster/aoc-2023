@@ -24,19 +24,19 @@ fn main() {
     // First handle the workflows.
     let mut workflows: HashMap<String, Workflow> = HashMap::new();
     for line in chunks.next().unwrap().lines() {
-        let mut split = line.split("{");
+        let mut split = line.split('{');
         let key = split.next().unwrap().to_string();
         let value = split.next().unwrap();
-        let iter = value[0..value.len() - 1].split(",");
+        let iter = value[0..value.len() - 1].split(',');
         let mut items: Vec<Item> = Vec::new();
         let mut last = "";
         for item in iter {
-            let mut split = item.split(":");
+            let mut split = item.split(':');
             if split.clone().count() > 1 {
                 let eq = split.next().unwrap();
                 let target = split.next().unwrap().to_string();
-                let id = eq.bytes().nth(0).unwrap();
-                let cmp = eq.bytes().nth(1).unwrap() == b'>';
+                let id = eq.as_bytes()[0];
+                let cmp = eq.as_bytes()[1] == b'>';
                 let amount = eq[2..].parse::<u16>().unwrap();
                 items.push(Item { id, amount, cmp, target });
             } else {
@@ -54,7 +54,7 @@ fn main() {
         .unwrap();
     for line in chunks.next().unwrap().lines() {
         let params = line[1..line.len() - 1]
-            .split(",")
+            .split(',')
             .collect::<Vec<&str>>();
         
         if check_workflow(&workflows, start, &params) {
@@ -72,7 +72,7 @@ fn check_workflow(workflows: &HashMap<String, Workflow>, workflow: &Workflow, pa
     for item in &workflow.items {
         let param = params
             .iter()
-            .find(|x| x.bytes().nth(0).unwrap() == item.id)
+            .find(|x| x.as_bytes()[0] == item.id)
             .unwrap();
 
         let amount = param[2..].parse::<u16>().unwrap();
