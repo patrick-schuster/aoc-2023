@@ -14,7 +14,6 @@ enum Direction {
 
 #[derive(Clone)]
 struct Node {
-    previous: Option<Box<Node>>,
     index: usize,
     cost: u32,
     chain: u8,
@@ -24,18 +23,6 @@ struct Node {
 impl PartialEq for Node {
     fn eq(&self, other: &Self) -> bool {
         self.index == other.index && self.chain == other.chain && self.direction == other.direction
-    }
-}
-
-impl Node {
-    fn new(previous: Option<Box<Node>>, index: usize, cost: u32, chain: u8, direction: Direction) -> Self {
-        Self {
-            previous,
-            index,
-            cost,
-            chain,
-            direction
-        }
     }
 }
 
@@ -58,7 +45,12 @@ fn main() {
     let mut closed_set: Vec<Node> = Vec::new();
 
     // Add the initial node.
-    open_set.push(Node::new(None, 0, 0, 1, Direction::None));
+    open_set.push(Node {
+        index: 0, 
+        cost: 0,
+        chain: 1,
+        direction: Direction::None
+    }); 
 
     // Loop until no more open nodes left.
     while !open_set.is_empty() {
@@ -81,7 +73,6 @@ fn main() {
         let bottom = index + width;
         if left.is_some() && left.unwrap() % width != width - 1 && current.direction != Direction::Right {
             next_nodes.push(Node {
-                previous: Some(Box::new(current.clone())),
                 index: left.unwrap(),
                 cost: current.cost + data[left.unwrap()] as u32,
                 chain: if current.direction == Direction::None || current.direction == Direction::Left {
@@ -95,7 +86,6 @@ fn main() {
 
         if top.is_some() && current.direction != Direction::Down {
             next_nodes.push(Node {
-                previous: Some(Box::new(current.clone())),
                 index: top.unwrap(),
                 cost: current.cost + data[top.unwrap()] as u32,
                 chain: if current.direction == Direction::None || current.direction == Direction::Up {
@@ -109,7 +99,6 @@ fn main() {
 
         if right % width != 0 && current.direction != Direction::Left {
             next_nodes.push(Node {
-                previous: Some(Box::new(current.clone())),
                 index: right,
                 cost: current.cost + data[right] as u32,
                 chain: if current.direction == Direction::None || current.direction == Direction::Right {
@@ -123,7 +112,6 @@ fn main() {
 
         if bottom < width * height && current.direction != Direction::Up {
             next_nodes.push(Node {
-                previous: Some(Box::new(current.clone())),
                 index: bottom,
                 cost: current.cost + data[bottom] as u32,
                 chain: if current.direction == Direction::None || current.direction == Direction::Down {
